@@ -51,21 +51,17 @@ table {
 	border-spacing: 0;
 }
 
-#set-height {
-	display: block;
-  }
-  #v0 {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-  }
-  p font-family helvetica {
-	font-size: 24px;
-  }
+
+.scroll-video {
+    position: relative; /* Ensures it's inside the document flow */
+    width: 100%;
+    max-width: 800px; /* Adjust as needed */
+    display: block;
+    margin: 0px auto; /* Adds spacing between videos */
+}
 
 
-  
+
 body {
 	-webkit-text-size-adjust: none;
 }
