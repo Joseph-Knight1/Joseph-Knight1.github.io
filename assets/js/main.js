@@ -23,14 +23,6 @@ function scrollPlay(){
 }
 window.requestAnimationFrame(scrollPlay);
 
-document.addEventListener("DOMContentLoaded", function () {
-    let video = document.getElementById("v0");
-    video.play().then(() => {
-        video.pause(); // Immediately pause so scrolling can control playback
-    }).catch(error => {
-        console.log("Autoplay blocked, waiting for user interaction.");
-    });
-});
 
 
 (function($) {
