@@ -1,36 +1,39 @@
 /*
-	Read Only by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+    Read Only by HTML5 UP
+    html5up.net | @ajlkn
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
 
 var frameNumber = 0, // start video at frame 0
-    // lower numbers = faster playback
-    playbackConst = 70, 
-    // get page height from video duration
-    setHeight = document.getElementById("set-height"), 
-    // select video element         
-    vid = document.getElementById('v0'); 
-// dynamically set the page height according to video length
-vid.addEventListener('loadedmetadata', function() {
-  setHeight.style.height = Math.floor(vid.duration) * playbackConst + "px";
-});
-// Use requestAnimationFrame for smooth playback
-function scrollPlay(){  
-  var frameNumber  = window.pageYOffset/playbackConst;
-  vid.currentTime  = frameNumber;
-  window.requestAnimationFrame(scrollPlay);
-}
-window.requestAnimationFrame(scrollPlay);
+    playbackConst = 70, // lower numbers = faster playback
+    setHeight = document.getElementById("set-height"),
+    vid = document.getElementById('v0');
 
-document.addEventListener("DOMContentLoaded", function () {
-    let video = document.getElementById("v0");
-    video.play().then(() => {
-        video.pause(); // Immediately pause so scrolling can control playback
-    }).catch(error => {
-        console.log("Autoplay blocked, waiting for user interaction.");
+// Only run video logic if the video exists
+if (vid) {
+    // dynamically set the page height according to video length
+    vid.addEventListener('loadedmetadata', function () {
+        if (setHeight) {
+            setHeight.style.height = Math.floor(vid.duration) * playbackConst + "px";
+        }
     });
-});
+
+    // Use requestAnimationFrame for smooth playback
+    function scrollPlay() {
+        var frameNumber = window.pageYOffset / playbackConst;
+        vid.currentTime = frameNumber;
+        window.requestAnimationFrame(scrollPlay);
+    }
+    window.requestAnimationFrame(scrollPlay);
+
+    document.addEventListener("DOMContentLoaded", function () {
+        vid.play().then(() => {
+            vid.pause(); // Immediately pause so scrolling can control playback
+        }).catch(error => {
+            console.log("Autoplay blocked, waiting for user interaction.");
+        });
+    });
+}
 
 
 (function($) {
