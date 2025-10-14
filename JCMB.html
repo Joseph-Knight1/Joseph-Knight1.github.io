@@ -187,33 +187,102 @@
           <div>
             <label>Start Room: <input id="start-room" type="text"></label>
             <label>End Room: <input id="end-room" type="text"></label>
+            <div style="margin-top:10px;">
+              <input type="checkbox" id="show-overlay" style="margin-right:6px;">
+              <label for="show-overlay">Show 2D overlay</label>
+            </div>
             <button id="calc-btn">Calculate Path</button>
           </div>
           
+          <div id="building-plot" style="width:100%; height:600px;"></div>
+          
+          <!-- Optional overlay image container -->
+          <div id="overlay-container" style="margin-top:20px; text-align:center; display:none;">
+            <h3>2D Stacked Overlay</h3>
+            <img id="overlay-image" style="max-width:90%; border:1px solid #272121; border-radius:10px;" />
+          </div>
+          
+          
           <div id="building-plot" style="width:100%; height:600px;">
 
-          <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-          <script>
-          const container = 'building-plot';
-          const baseUrl = 'https://python-web-embedding.onrender.com';
-
-          // Function to fetch and plot figure
-          async function plotFigure(url) {
-            const res = await fetch(url);
-            const fig = await res.json();
-            Plotly.newPlot(container, fig.data, fig.layout);
-          }
-
-          // Initial load of base building
-          plotFigure(`${baseUrl}/plot`);
-
-          // Add event listener to calculate button
-          document.getElementById('calc-btn').addEventListener('click', () => {
-            const start = document.getElementById('start-room').value;
-            const end   = document.getElementById('end-room').value;
-            plotFigure(`${baseUrl}/plot_path?start=${start}&end=${end}`);
-          });
-          </script>
+            <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+            <script>
+            const baseUrl = 'https://python-web-embedding.onrender.com';
+            const container = 'building-plot';
+            
+            // Function to plot a Plotly figure from JSON
+            function renderPlotlyFigure(figJSON) {
+              const fig = typeof figJSON === 'string' ? JSON.parse(figJSON) : figJSON;
+              Plotly.newPlot(container, fig.data, fig.layout);
+            }
+            
+            // Function to call backend and plot
+            async function calculatePath() {
+              const start = document.getElementById('start-room').value.trim();
+              const end   = document.getElementById('end-room').value.trim();
+              const showOverlay = document.getElementById('show-overlay').checked;
+            
+              if (!start || !end) {
+                alert('Please enter both start and end room numbers.');
+                return;
+              }
+            
+              // Build the POST body
+              const payload = {
+                start_input: start,
+                end_input: end,
+                show_overlay: showOverlay
+              };
+            
+              try {
+                const res = await fetch(`${baseUrl}/plot_path`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+                });
+            
+                if (!res.ok) {
+                  const err = await res.text();
+                  throw new Error(err || 'Backend error');
+                }
+            
+                const data = await res.json();
+            
+                // Render 3D building path
+                if (data.plotly_fig) {
+                  renderPlotlyFigure(data.plotly_fig);
+                }
+            
+                // If overlay is returned, show it
+                const overlayContainer = document.getElementById('overlay-container');
+                const overlayImage = document.getElementById('overlay-image');
+            
+                if (data.overlay_image) {
+                  overlayImage.src = "data:image/png;base64," + data.overlay_image;
+                  overlayContainer.style.display = "block";
+                } else {
+                  overlayContainer.style.display = "none";
+                }
+            
+              } catch (err) {
+                console.error(err);
+                alert("Error fetching plot: " + err.message);
+              }
+            }
+            
+            // Initial load of base building only (no path)
+            async function loadBaseBuilding() {
+              const res = await fetch(`${baseUrl}/plot`);
+              const fig = await res.json();
+              renderPlotlyFigure(fig);
+            }
+            
+            document.getElementById('calc-btn').addEventListener('click', calculatePath);
+            
+            // Load initial view
+            loadBaseBuilding();
+            </script>
+            
           </div>
           
 
