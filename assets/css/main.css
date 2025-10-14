@@ -3388,3 +3388,90 @@ input, select, textarea {
 	color: #333;
   }
   
+
+  .edu-box.history-box {
+	--image-size: 140px;       /* image width */
+	--caption-ratio: 1;      /* caption width relative to image */
+	--left-offset: 20px;       /* distance from left border of box */
+	--image-offset: 10px;      /* extra offset before the image */
+	--caption-offset: -15px;     /* manual horizontal adjustment of caption */
+  
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 1.2rem;
+  
+	padding-left: var(--left-offset);
+	padding-right: 15px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+  
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	background: #fff;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  
+  /* Figure (image + caption) */
+  .edu-box.history-box .edu-logo-figure {
+	display: flex;
+	flex-direction: column;
+	align-items: center; 
+	justify-content: flex-start;
+	flex: 0 0 var(--image-size);
+	width: var(--image-size);
+	margin-left: var(--image-offset);
+	margin-right: 0;
+	text-align: center;
+	box-sizing: border-box;
+  }
+  
+  /* Image */
+  .edu-box.history-box .edu-logo {
+	width: var(--image-size);
+	height: auto;
+	object-fit: contain;
+	display: block;
+  }
+  
+  /* Caption with manual offset */
+  .edu-box.history-box .edu-caption,
+  .edu-box.history-box figure figcaption {
+	width: calc(var(--image-size) * var(--caption-ratio));
+	max-width: 100%;
+	margin-top: 0.45rem;
+	font-size: 0.85em;
+	color: #aba9a9;
+	line-height: 1.25;
+	text-align: center;
+	word-wrap: break-word;
+  
+	/* manual horizontal adjustment */
+	margin-left: calc(var(--caption-offset));
+	margin-right: 0; /* keep right side natural */
+  }
+  
+  /* Text section */
+  .edu-box.history-box .edu-details {
+	flex: 1 1 auto;
+	min-width: 0;
+  }
+  
+  /* Responsive stacking */
+  @media (max-width: 600px) {
+	.edu-box.history-box {
+	  flex-direction: column;
+	  align-items: flex-start;
+	}
+	.edu-box.history-box .edu-logo-figure {
+	  align-self: center;
+	  margin-left: 0;           /* reset image offset when stacked */
+	  margin-bottom: 10px;
+	}
+	.edu-box.history-box .edu-caption {
+	  width: 100%;
+	  max-width: none;
+	  margin-left: 0;           /* reset caption offset on small screens */
+	}
+  }
+  

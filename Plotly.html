@@ -1,0 +1,247 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>JCMB Route Finder - Joseph M. Knight</title>
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body class="is-preload">
+
+  
+
+    <!-- Header / Sidebar -->
+    <section id="header">
+      <header>
+        <span class="image avatar"><img src="images/avatar.jpg" alt="" /></span>
+        <h1 id="logo"><a href="index.html">Joseph M. Knight</a></h1>
+        <p>PhD Student at the University of Edinburgh</p>
+      </header>
+
+      <nav id="nav">
+        <ul>
+          <li><a href="index.html#one">Home</a></li>
+          <li><a href="biography.html">Biography</a></li>
+          <li><a href="index.html#two">Research</a></li>
+          <li><a href="index.html#three">Publications</a></li>
+          <li><a href="conferences.html">Conferences</a></li>
+          <li><a href="Plotly.html" class="active">JCMB Project</a></li>
+          <li><a href="index.html#four">Contact</a></li>
+        </ul>
+      </nav>
+
+      <footer>
+        <ul class="icons">
+          <li><a href="https://www.linkedin.com/in/joseph-m-knight-7664b1284/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+          <li><a href="https://github.com/Joseph-Knight1" class="icon brands fa-github"><span class="label">Github</span></a></li>
+          <li><a href="mailto:Joseph.Knight@ed.ac.uk" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+          <li><a href="https://www.strava.com/athletes/11921215" class="icon brands fa-strava"><span class="label">Strava</span></a></li>
+        </ul>
+      </footer>
+    </section>
+
+    <!-- Wrapper -->
+  <div id="wrapper">
+
+    <!-- Main Content -->
+    <div id="main">
+
+      <!-- Conferences Section -->
+      <section>
+        <div class="container">
+          <h2>The Maze of JCMB - <i>A Network Approach</i></h2>
+          <p>The James Clerk Maxwell Building (JCMB) is home to the School of Physics & Astronomy at the University of Edinburgh. One of the most frequent comments from staff and students (old and new) is that JCMB is a 'maze', with seemingly illogical dead-end corridors and multiple staircase options for traversing floors. 
+
+            <div style="text-align: center;">
+                <figure style="display: inline-block; text-align: center;">
+                    <img src="Images/JCMB.jpg" alt="Description of the image" style="max-width: 70%; height: auto;">
+                    <figcaption style="font-size: 0.9em; color: #aca7a7;">A photo of JCMB looking at the main entrance from the West. The Center for Science at Extreme Conditions (CSEC) is seen adjoining JCMB to the South and, behind and to the East, the Michael Swann Building is just visible. </figcaption>
+                </figure>
+                </div>
+
+          <br>As my research is primarily focused on understanding the network structure of biological systems (See <b>Research</b>), I wondered if it would be possible to apply a similar <i>network approach</i> to better understand the connectivity (or topology) of the building and, ultimately, build a route finding applet to <b>find the shortest path between rooms</b>. On this page I will detail this process and some findings.  
+          </p>
+
+          <div class="edu-box history-box">
+            <figure class="edu-logo-figure">
+              <img src="images/Basil_Spence.jpg" alt="Basil Spence Portrait" class="edu-logo">
+              <figcaption class="edu-caption"> 
+                Blue plaque commemorating the residence of Basil Spence in Islington, London. 
+              </figcaption>
+            </figure>
+          
+            <div class="edu-details">
+              <h3>
+                  A brief history of the James Clerk Maxwell Building
+              </h3>
+              <p class="edu-dates">The JCMB is one of many buildings that forms part of the wider science campus at Edinburgh known as The King's Buildings (or, colloquially, <i>Kings</i>). An excellent <a href="https://science-engineering.ed.ac.uk/about/history/kb-history-exhibition">history of the King's Building Campus</a> was made to commemorate its centenary year featuring historic aerial photos. Construction of the JCMB began in 1966, under the design of renowned Scottish architect <a href="https://en.wikipedia.org/wiki/Basil_Spence">Sir Basil Spence</a>. Spence is perhaps best known as the architect of the <a href="https://www.coventrycathedral.org.uk/locations/the-new-cathedral">rebuilt Coventry Cathedral</a>, but his projects also include multiple university buildings across the UK. Following construction, the departments of Geology, Mathematics, Meterology and Physics moved into the building between 1969 and 1976, though today only Physics and Maths remain.
+            </p> 
+            </div>
+          </div>
+          
+
+          <h3>JCMB as a Network: <i>Implementation </i></h3>
+          <h4>An introduction to network theory</h4>
+
+          <p>
+            At the heart of network science is the idea that a physical network can be represented as a mathematical object known as a graph. A given graph \( G\) is defined in terms of a relation betweeen a set of nodes and edges. So, the graph \( G=(V,L) \) is defined in terms of a set \( V \) of \(N \) nodes alongside a set \( L \) of \(E \) edges that connect these nodes.  <br> <br>
+
+            The most fundemental way of representing our graph \( G\) is through an <b>adjacency matrix</b> \( a_{ij}\). The entries of this matrix tell us whether there exists a connection between two nodes specified by the indices \( i\) and \( j\) such that we have 
+            
+            \[ a_{ij}= \begin{cases}
+            1, \text{if} \; i \;\text{and}\; j \;\text{are connected} \\ 0 \; \text{otherwise} \end{cases} \]
+            
+            For an <b>undirected graph</b>, this adjacency matrix is symmetric (that is, \( a_{ij}=a_{ji}\)) such that the edges encode no directional information. The adjacency matrix that we have introduced above is also implicitly an <b>unweighted graph</b>, that is, it encodes no length information in the edges, only whether they exist or not. Rather than this purely topological representation, we can easily incorporate edge length information using a <b>weighted graph</b> where now our weighted adjacency matrix \(A_{ij} \) has entries given by the length of the edge between nodes \( i\) and \( j\), with the entry still being zero if no such edge exists. 
+           </p>
+
+         <h4>Network Properties</h4>
+            <p>
+                An important property of any given node (especially when it comes to our representation of a building as a network) is the <b>degree</b> of a node. The node degree is defined as the number of neighboring nodes which can be formalised using the unweighted adjacency matrix \( a_{ij}\) as
+
+                \[ k_i = \sum_j a_{ij} \]
+
+                In our construction of a JCMB network, nodes of degree one (that is, endpoints) will represent our rooms whilst higher degree nodes, most frequently either degree three or four, will represent junctions in corridors. Interestingly, in the context of spatial networks (networks embedded in physical space rather than more abstract networks such the World Wide Web), the idea of a degree two node is somewhat redundant. <br> <br>
+
+                Two interesting <b>network metrics</b> that we will consider look at the global structure of the network. The first of these is the <b>cost</b> \(C\) of the network. This is defined with the weighted adjacency matrix \( A_{ij} \) as
+
+                \[ C=\frac{1}{2}\sum_{i\neq j} A_{ij}\]
+
+                which is just a measurement of the total length of edges in the network. A second, more complicated metric that we will introduce is the global efficiency \(E_g\) of the network. This is defined as
+
+                \[ E_g = \frac{1}{N(N-1)}\sum_{i\neq j}\frac{\ell_{ij}}{d_{ij}}.\]
+
+                Here, we compare, for each of the \(N(N-1)\) node pairings, the shortest distance \(d_{ij}\) connected the two nodes through the network with the Euclidian straight line distance \(\ell_{ij}\) between the two points. This gives us some measure of the '<i>transport efficiency</i>' of the network, that is, how easy it is to get from any point on the network to any other point. By normalising these two measures based on the extreme cases of the <a href="https://en.wikipedia.org/wiki/Minimum_spanning_tree">Minimum Spanning Tree (MST)</a> and <a href="https://en.wikipedia.org/wiki/Delaunay_triangulation">Delaunay Triangulation (DT)</a> it is possible to make comparisons of networks across different lengthscales with \(\hat{E}_g\) and \(\hat{C}\).
+            </p>
+
+            <h4>Building the JCMB Network</h4>
+            <p>
+                The first step in constructing the overall building graph \(G_\text{JCMB}\) is to first build subgraphs \(G_i\) of the individual floors where we have \( i \in [1,7] \cap \mathbb{Z} \). To do this we take the floorplans (which are available <a href="https://vpnreg.ucs.ed.ac.uk/access/wifisurvey.html"> here</a> following a WiFi signal strength mapping survey). From each floorplan connectivity trace, we build a spatially embedded network using the <a href="https://github.com/Image-Py/sknw"><code>sknw</code></a> package. <br> <br>
+
+                With all of the floor subgraphs, we can write the total graph \(G_\text{JCMB}\) in <a href="https://en.wikipedia.org/wiki/Block_matrix"> block diagonal form</a>. As shown below, we can then specify the off diagonal staircase '<i>linker</i>' entries of the weighted adjacency matrix. <br>
+
+                \[
+                    G_\text{JCMB} =
+                    \begin{pmatrix}
+                    \color[rgb]{0.51, 0.714, 0.89}{\begin{pmatrix}
+                    &  &  \\
+                    & G_1 &  \\
+                    &  & 
+                    \end{pmatrix}} & 
+                    \begin{matrix}
+                    0 & 0 & 0 \\
+                    0 & s^{\color[rgb]{0.51, 0.714, 0.89}{1}\color[rgb]{0, 0, 0}{,}\color[rgb]{0.83, 0.725, 0.541}{2}}_{ij} & 0 \\
+                    0 & 0 & 0
+                    \end{matrix} & 
+                    \begin{matrix}
+                    0 & 0 & 0 \\
+                    0 & 0 & 0 \\
+                    0 & 0 & 0
+                    \end{matrix} \\[3 mm]
+                    \begin{matrix}
+                    0 & 0 & 0 \\
+                    0 & s^{\color[rgb]{0.51, 0.714, 0.89}{1}\color[rgb]{0, 0, 0}{,}\color[rgb]{0.83, 0.725, 0.541}{2}}_{ij} & 0 \\
+                    0 & 0 & 0
+                    \end{matrix} & 
+                    \color[rgb]{0.83, 0.725, 0.541}{\begin{pmatrix}
+                    &  &  \\
+                    & G_2 &  \\
+                    &  & 
+                    \end{pmatrix}} & 
+                    \begin{matrix}
+                    0 & 0 & 0 \\
+                    0 & s^{\color[rgb]{0.83, 0.725, 0.541}{2}\color[rgb]{0, 0, 0}{,}\color[rgb]{0.84, 0.247, 0.125}{3}}_{ij} & 0 \\
+                    0 & 0 & 0
+                    \end{matrix} \\[3 mm]
+                    \begin{matrix}
+                    0 & 0 & 0 \\
+                    0 & 0 & 0 \\
+                    0 & 0 & 0
+                    \end{matrix} & 
+                    \begin{matrix}
+                    0 & 0 & 0 \\
+                    0 & s^{\color[rgb]{0.83, 0.725, 0.541}{2}\color[rgb]{0, 0, 0}{,}\color[rgb]{0.84, 0.247, 0.125}{3}}_{ij} & 0 \\
+                    0 & 0 & 0
+                    \end{matrix} & 
+                    \color[rgb]{0.84, 0.247, 0.125}{\begin{pmatrix}
+                    &  &  \\
+                    & G_3 &  \\
+                    &  & 
+                    \end{pmatrix}}
+                    \end{pmatrix}
+
+                \] 
+
+                The matrix representation above shows the introduction of our staircase (or lift) links between floors, giving us our complete building network. 
+
+
+            </p>
+
+          
+          <h3>JCMB Path Finder</h3>
+          <p>Below you can find and interact with the shortest path between rooms in JCMB. The calculation is performed using <a href="https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm"> Dijkstra's algorithm</a> and 3D plotting uses Plotly. </p>
+
+          <div>
+            <label>Start Room: <input id="start-room" type="text"></label>
+            <label>End Room: <input id="end-room" type="text"></label>
+            <button id="calc-btn">Calculate Path</button>
+          </div>
+          
+          <div id="building-plot" style="width:100%; height:600px;">
+
+          <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+          <script>
+          const container = 'building-plot';
+          const baseUrl = 'https://python-web-embedding.onrender.com';
+
+          // Function to fetch and plot figure
+          async function plotFigure(url) {
+            const res = await fetch(url);
+            const fig = await res.json();
+            Plotly.newPlot(container, fig.data, fig.layout);
+          }
+
+          // Initial load of base building
+          plotFigure(`${baseUrl}/plot`);
+
+          // Add event listener to calculate button
+          document.getElementById('calc-btn').addEventListener('click', () => {
+            const start = document.getElementById('start-room').value;
+            const end   = document.getElementById('end-room').value;
+            plotFigure(`${baseUrl}/plot_path?start=${start}&end=${end}`);
+          });
+          </script>
+          </div>
+          
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Footer -->
+    <section id="footer">
+      <div class="container">
+        <ul class="copyright">
+          <li>&copy; Joseph Knight 2025. All rights reserved.</li>
+          <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/jquery.scrollex.min.js"></script>
+  <script src="assets/js/jquery.scrolly.min.js"></script>
+  <script src="assets/js/browser.min.js"></script>
+  <script src="assets/js/breakpoints.min.js"></script>
+  <script src="assets/js/util.js"></script>
+  <script src="assets/js/main.js"></script>
+
+</body>
+</html>
