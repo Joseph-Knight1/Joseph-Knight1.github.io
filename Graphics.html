@@ -61,7 +61,7 @@
 
           <div class="gallery-container">
             <button class="gallery-nav left" aria-label="Scroll left">❮</button>
-            <div class="gallery" id="gallery">
+            <div class="gallery" id="gallery1">
           
                 <div class="gallery-item">
                     <div class="card">
@@ -71,7 +71,7 @@
                       </div>
                       <div class="back">
                         <div class="caption long">
-                          Commisioned figure showing how the properties of various substances vary across three independent parameters.
+                          Commisioned figure showing how various substances across a three-dimensional parameter space.
                         </div>
                       </div>
                     </div>
@@ -174,7 +174,7 @@
 
           <div class="gallery-container">
             <button class="gallery-nav left" aria-label="Scroll left">❮</button>
-            <div class="gallery" id="gallery">
+            <div class="gallery" id="gallery2">
           
                 <div class="gallery-item">
                     <div class="card">
@@ -273,15 +273,21 @@
   <!-- ... your gallery HTML here ... -->
 
   <script>
-    const gallery = document.getElementById('gallery');
     const scrollAmount = 400;
-  
-    // Scroll buttons
-    document.querySelector('.gallery-nav.left').addEventListener('click', () => {
-      gallery.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+
+    // Loop through each gallery container
+    document.querySelectorAll('.gallery-container').forEach(container => {
+    const gallery = container.querySelector('.gallery');
+    const leftBtn = container.querySelector('.gallery-nav.left');
+    const rightBtn = container.querySelector('.gallery-nav.right');
+
+    leftBtn.addEventListener('click', () => {
+        gallery.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
     });
-    document.querySelector('.gallery-nav.right').addEventListener('click', () => {
-      gallery.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+
+    rightBtn.addEventListener('click', () => {
+        gallery.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    });
     });
   
     // Fade toggle on click
