@@ -3474,4 +3474,140 @@ input, select, textarea {
 	  margin-left: 0;           /* reset caption offset on small screens */
 	}
   }
+/* Outer container + carousel scroll */
+.gallery-container {
+	position: relative;
+	max-width: 1000px;
+	margin: 2rem auto;
+	overflow: hidden;
+  }
   
+  .gallery {
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+	overflow-x: auto;
+	scroll-behavior: smooth;
+	scrollbar-width: none;
+  }
+  .gallery::-webkit-scrollbar {
+	display: none;
+  }
+  
+  /* Each card retains fixed height but width auto-adjusts to image ratio */
+  .gallery-item {
+	flex: 0 0 auto;
+	height: 300px;
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+	background: #fff;
+	position: relative;
+  }
+  
+  /* Card fade structure */
+  .card {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	cursor: pointer;
+  }
+  
+  .front, .back {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	transition: opacity 0.4s ease;
+  }
+  
+  .front {
+	opacity: 1;
+	z-index: 2;
+  }
+  
+  .back {
+	opacity: 0;
+	background: rgba(0,0,0,0.8);
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	text-align: center;
+	z-index: 1;
+  }
+  
+  /* Image sizing: fit height, preserve aspect ratio */
+  .front img {
+	height: 100%;
+	width: auto;
+	display: block;
+  }
+  
+  /* Short caption overlay */
+  .front .caption.short {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(0, 0, 0, 0.6);
+	color: #fff;
+	padding: 0.75rem 1rem;
+	font-size: 0.95rem;
+	transition: opacity 0.3s ease;
+	opacity: 0;
+  }
+  
+  /* Show short caption on hover */
+  .card:hover .caption.short {
+	opacity: 1;
+  }
+
+
+  
+  /* Long caption styling */
+  .back .caption.long {
+	font-size: 0.95rem;
+	line-height: 1.4;
+  }
+  
+  /* Fade toggle on click */
+  .card.faded .front {
+	opacity: 0.2; /* fade the image */
+  }
+  .card.faded .back {
+	opacity: 1; /* reveal long caption */
+  }
+  
+  /* Navigation arrows */
+  .gallery-nav {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	background: rgba(255, 255, 255, 0.8);
+	border: none;
+	border-radius: 50%;
+	width: 40px;
+	height: 40px;
+	cursor: pointer;
+	font-size: 1.5rem;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+	transition: background 0.2s;
+	z-index: 5;
+  }
+  
+  .gallery-nav:hover {
+	background: rgba(255, 255, 255, 1);
+  }
+  
+  .gallery-nav.left { left: 10px; }
+  .gallery-nav.right { right: 10px; }
+
+/* Hide short caption when long caption is visible */
+.card.faded .caption.short {
+    opacity: 0 !important;
+    pointer-events: none; /* optional, prevents accidental hover */
+}
+
+  
+

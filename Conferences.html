@@ -14,34 +14,35 @@
   
 
     <!-- Header / Sidebar -->
-    <section id="header">
-      <header>
-        <span class="image avatar"><img src="images/avatar.jpg" alt="" /></span>
-        <h1 id="logo"><a href="index.html">Joseph M. Knight</a></h1>
-        <p>PhD Student at the University of Edinburgh</p>
-      </header>
-
-      <nav id="nav">
-        <ul>
-          <li><a href="index.html#one">Home</a></li>
-          <li><a href="biography.html">Biography</a></li>
-          <li><a href="index.html#two">Research</a></li>
-          <li><a href="index.html#three">Publications</a></li>
-          <li><a href="conferences.html" class="active">Conferences</a></li>
-          <li><a href="JCMB.html">JCMB Project</a></li>
-          <li><a href="index.html#four">Contact</a></li>
-        </ul>
-      </nav>
-
-      <footer>
-        <ul class="icons">
-          <li><a href="https://www.linkedin.com/in/joseph-m-knight-7664b1284/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
-          <li><a href="https://github.com/Joseph-Knight1" class="icon brands fa-github"><span class="label">Github</span></a></li>
-          <li><a href="mailto:Joseph.Knight@ed.ac.uk" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
-          <li><a href="https://www.strava.com/athletes/11921215" class="icon brands fa-strava"><span class="label">Strava</span></a></li>
-        </ul>
-      </footer>
-    </section>
+    <section id="header"> 
+      <header> 
+        <span class="image avatar"><img src="images/avatar.jpg" alt="" />
+        </span> 
+          <h1 id="logo"><a href="index.html">Joseph M. Knight</a></h1> 
+          <p>PhD Student at the University of Edinburgh</p> 
+        </header> 
+      
+        <nav id="nav"> 
+          <ul> 
+            <li><a href="index.html#one">Home</a></li> 
+            <li><a href="biography.html">Biography</a></li> 
+            <li><a href="index.html#two">Research</a></li> 
+            <li><a href="index.html#three">Publications</a></li> 
+            <li><a href="conferences.html" class="active">Conferences</a></li> 
+            <li><a href="JCMB.html">JCMB Project</a></li> 
+            <li><a href="Graphics.html">Art & Graphics</a></li> 
+          </ul> 
+        </nav> 
+        
+        <footer> 
+          <ul class="icons"> 
+            <li><a href="https://www.linkedin.com/in/joseph-m-knight-7664b1284/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li> 
+            <li><a href="https://github.com/Joseph-Knight1" class="icon brands fa-github"><span class="label">Github</span></a></li> 
+            <li><a href="mailto:Joseph.Knight@ed.ac.uk" class="icon solid fa-envelope"><span class="label">Email</span></a></li> 
+            <li><a href="https://www.strava.com/athletes/11921215" class="icon brands fa-strava"><span class="label">Strava</span></a></li> </ul> 
+        </footer> 
+      </section>
+    
 
     <!-- Wrapper -->
   <div id="wrapper">
@@ -121,40 +122,49 @@
             </div>
           </div>
 
-          <div>
-            <label>Start Room: <input id="start-room" type="text"></label>
-            <label>End Room: <input id="end-room" type="text"></label>
-            <button id="calc-btn">Calculate Path</button>
+          <div class="gallery-container">
+            <button class="gallery-nav left" aria-label="Scroll left">❮</button>
+            <div class="gallery" id="gallery">
+          
+              <div class="gallery-item">
+                <div class="card">
+                  <div class="front">
+                    <img src="images/JCMB.jpg" alt="Description 1">
+                    <div class="caption short">Short caption for image 1</div>
+                  </div>
+                  <div class="back">
+                    <div class="caption long">
+                      This is a longer caption for image 1, describing it in more detail.
+                    </div>
+                  </div>
+                </div>
+              </div>
+          
+              <div class="gallery-item">
+                <div class="card">
+                  <div class="front">
+                    <img src="images/Basil_Spence.jpg" alt="Description 2">
+                    <div class="caption short">Short caption for image 2</div>
+                  </div>
+                  <div class="back">
+                    <div class="caption long">
+                      Longer caption for image 2, with more background or context.
+                    </div>
+                  </div>
+                </div>
+              </div>
+          
+            </div>
+            <button class="gallery-nav right" aria-label="Scroll right">❯</button>
           </div>
           
-          <div id="building-plot" style="width:100%; height:600px;">
-
-          <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-          <script>
-          const container = 'building-plot';
-          const baseUrl = 'https://python-web-embedding.onrender.com';
-
-          // Function to fetch and plot figure
-          async function plotFigure(url) {
-            const res = await fetch(url);
-            const fig = await res.json();
-            Plotly.newPlot(container, fig.data, fig.layout);
-          }
-
-          // Initial load of base building
-          plotFigure(`${baseUrl}/plot`);
-
-          // Add event listener to calculate button
-          document.getElementById('calc-btn').addEventListener('click', () => {
-            const start = document.getElementById('start-room').value;
-            const end   = document.getElementById('end-room').value;
-            plotFigure(`${baseUrl}/plot_path?start=${start}&end=${end}`);
-          });
-          </script>
-          </div>
+          
+          
+          
+          
           
 
-        </div>
+          
       </section>
 
     </div>
@@ -179,6 +189,62 @@
   <script src="assets/js/breakpoints.min.js"></script>
   <script src="assets/js/util.js"></script>
   <script src="assets/js/main.js"></script>
+
+  <!-- ... your gallery HTML here ... -->
+
+  <script>
+    const gallery = document.getElementById('gallery');
+    const scrollAmount = 400;
+  
+    // Scroll buttons
+    document.querySelector('.gallery-nav.left').addEventListener('click', () => {
+      gallery.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    });
+    document.querySelector('.gallery-nav.right').addEventListener('click', () => {
+      gallery.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    });
+  
+    // Fade toggle on click
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', () => {
+        // Close others if open
+        document.querySelectorAll('.card.faded').forEach(other => {
+          if (other !== card) other.classList.remove('faded');
+        });
+        card.classList.toggle('faded');
+      });
+    });
+  
+    // Optional: click anywhere outside to close all open cards
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.card')) {
+        document.querySelectorAll('.card.faded').forEach(c => c.classList.remove('faded'));
+      }
+    });
+  </script>
+
+<script>
+  // After DOM is ready
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.gallery-item img').forEach(img => {
+      const height = img.clientHeight; // should be 250px
+      const ratio = img.naturalWidth / img.naturalHeight;
+      const width = height * ratio;
+      img.parentElement.parentElement.style.width = `${width}px`;
+    });
+  });
+</script>
+
+
+
+
+
+  
+  
+  
+
+
+
 
 </body>
 </html>
