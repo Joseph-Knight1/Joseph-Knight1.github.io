@@ -7,7 +7,7 @@ var frameNumber = 0, // start video at frame 0
  playbackConst = 70, // lower numbers = faster playback
  setHeight = document.getElementById("set-height"),
  vid = document.getElementById('v0'),
- scrollOffset = 100; // 🔧 TUNE THIS VALUE (px)
+ scrollOffset = 800; // 🔧 TUNE THIS VALUE (px)
  
  // Only run video logic if the video exists
  if (vid) {
@@ -20,19 +20,23 @@ var frameNumber = 0, // start video at frame 0
  
  // Use requestAnimationFrame for smooth playback
 function scrollPlay() {
-    // Apply offset so video starts later
     var scrollPosition = window.pageYOffset - scrollOffset;
 
-    // Convert scroll to video time
+    // Do nothing until offset is reached
+    if (scrollPosition <= 0) {
+        window.requestAnimationFrame(scrollPlay);
+        return;
+    }
+
     var frameNumber = scrollPosition / playbackConst;
 
-    // Clamp values to avoid jumping
     frameNumber = Math.max(0, Math.min(frameNumber, vid.duration));
 
     vid.currentTime = frameNumber;
 
     window.requestAnimationFrame(scrollPlay);
 }
+
 
 
  window.requestAnimationFrame(scrollPlay);
