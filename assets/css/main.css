@@ -2234,6 +2234,18 @@ input, select, textarea {
 				border-radius: 0;
 		}
 
+.image.main.fullwidth {
+  height: auto;        /* remove height cap */
+}
+
+.image.main.fullwidth img {
+  position: static;    /* undo absolute positioning */
+  width: 100%;
+  height: auto;
+  object-fit: contain; /* no cropping */
+}
+
+
 /* List */
 
 	ol {
