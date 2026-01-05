@@ -2234,16 +2234,26 @@ input, select, textarea {
 				border-radius: 0;
 		}
 
-.image.main.fullwidth {
-  height: auto;        /* remove height cap */
+/* Desktop default */
+.image.main {
+  height: 20em;
+  border-radius: 0;
 }
 
-.image.main.fullwidth img {
-  position: static;    /* undo absolute positioning */
-  width: 100%;
+/* Full-width responsive image */
+.image.main.fullwidth {
   height: auto;
-  object-fit: contain; /* no cropping */
 }
+
+/* Critical mobile-friendly overrides */
+.image.main.fullwidth img {
+  position: relative;     /* avoid absolute on mobile */
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;    /* never crop */
+}
+
 
 
 /* List */
