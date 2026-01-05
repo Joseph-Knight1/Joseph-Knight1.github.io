@@ -2230,15 +2230,9 @@ input, select, textarea {
 			border-radius: 0;
 		}
 
-		.image.main2 {
-			display: block;
-			height: 25em;
-			border-radius: 0;
-		}
-
-			.image.main img {
+		.image.main img {
 				border-radius: 0;
-			}
+		}
 
 /* List */
 
