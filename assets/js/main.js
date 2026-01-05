@@ -36,7 +36,7 @@ if (vid) {
                 vid.pause();
             }
         });
-    }, { threshold: 0.5 }); // Trigger when 50% of the video is visible
+    }, { threshold: 0.95 }); // Trigger when 50% of the video is visible
 
     // Start observing the video
     observer.observe(vid);
