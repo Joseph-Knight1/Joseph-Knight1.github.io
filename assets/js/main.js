@@ -5,35 +5,51 @@
 */
 
 var frameNumber = 0, // start video at frame 0
-    playbackConst = 70, // lower numbers = faster playback
+    playbackConst = 90, // lower numbers = faster playback
     setHeight = document.getElementById("set-height"),
     vid = document.getElementById('v0');
 
 // Only run video logic if the video exists
 if (vid) {
-    // dynamically set the page height according to video length
+    // Dynamically set the page height according to video length
     vid.addEventListener('loadedmetadata', function () {
         if (setHeight) {
             setHeight.style.height = Math.floor(vid.duration) * playbackConst + "px";
         }
     });
 
-    // Use requestAnimationFrame for smooth playback
+    // Use IntersectionObserver to detect when the video is in view
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            // If the video is in view, start playback and control scroll
+            if (entry.isIntersecting) {
+                vid.play().then(() => {
+                    // Immediately pause so scrolling can control playback
+                    vid.pause();
+                    // Start the scroll-based playback
+                    window.requestAnimationFrame(scrollPlay);
+                }).catch(error => {
+                    console.log("Autoplay blocked, waiting for user interaction.");
+                });
+            } else {
+                // Pause the video when it goes out of view
+                vid.pause();
+            }
+        });
+    }, { threshold: 0.5 }); // Trigger when 50% of the video is visible
+
+    // Start observing the video
+    observer.observe(vid);
+
+    // Use requestAnimationFrame for smooth playback as the user scrolls
     function scrollPlay() {
+        // Only play the video if it is in view
         var frameNumber = window.pageYOffset / playbackConst;
         vid.currentTime = frameNumber;
         window.requestAnimationFrame(scrollPlay);
     }
-    window.requestAnimationFrame(scrollPlay);
-
-    document.addEventListener("DOMContentLoaded", function () {
-        vid.play().then(() => {
-            vid.pause(); // Immediately pause so scrolling can control playback
-        }).catch(error => {
-            console.log("Autoplay blocked, waiting for user interaction.");
-        });
-    });
 }
+
 
 
 (function($) {
