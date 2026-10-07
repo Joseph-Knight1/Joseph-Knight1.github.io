@@ -3812,6 +3812,6 @@ input[type="button"]:disabled,
 
 @media (max-width: 736px) {
 	.animation-embed iframe {
-		height: 560px;
+		height: 1000px;
 	}
 }
