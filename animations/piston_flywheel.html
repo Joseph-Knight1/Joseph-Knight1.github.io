@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Piston and flywheel</title>
+  <style>
+    :root {
+      --bg: #f6f5f1;
+      --fg: #222;
+      --muted: #666;
+      --metal: #9aa4ad;
+      --dark: #4b5560;
+      --accent: #d2552b;
+      --line: #c9c6bd;
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px)
+    }
+
+    @media (prefers-color-scheme:dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #ffffff;
+        --fg: #000000;
+        --muted: #98a0a8;
+        --metal: #6d7782;
+        --dark: #aab4bd;
+        --accent: #f0784a;
+        --line: #33383d
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #16181b;
+      --fg: #e8e6e1;
+      --muted: #98a0a8;
+      --metal: #6d7782;
+      --dark: #aab4bd;
+      --accent: #f0784a;
+      --line: #33383d
+    }
+
+    html {
+      scroll-padding-top: env(safe-area-inset-top, 0px)
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font: 15px/1.4 system-ui, sans-serif;
+      display: flex;
+      justify-content: center
+    }
+
+    main {
+      width: 100%;
+      max-width: 640px;
+      padding: 16px
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 8px
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 12px
+    }
+
+    input[type=range] {
+      flex: 1;
+      min-width: 160px
+    }
+
+    button {
+      font: inherit;
+      padding: 6px 12px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--fg);
+      border-radius: 6px;
+      cursor: pointer
+    }
+
+    label {
+      color: var(--muted)
+    }
+
+    output,
+    code {
+      font-variant-numeric: tabular-nums
+    }
+
+    .read {
+      color: var(--muted);
+      margin-top: 8px
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <svg id="stage" viewBox="0 0 460 340" role="img" aria-label="Piston driving a flywheel">
+      <!-- static cylinder -->
+      <rect id="cylinder" x="0" y="0" width="0" height="0" fill="none" stroke="var(--dark)" stroke-width="4" />
+      <!-- piston: only translated -->
+      <g id="piston">
+        <rect x="-10" y="-30" width="60" height="60" rx="3" fill="var(--metal)" stroke="var(--dark)" stroke-width="2" />
+        <line x1="2" y1="-30" x2="2" y2="30" stroke="var(--dark)" stroke-width="2" />
+        <line x1="14" y1="-30" x2="14" y2="30" stroke="var(--dark)" stroke-width="2" />
+      </g>
+      <!-- connecting rod: endpoints set directly each frame -->
+      <line id="rod" stroke="var(--dark)" stroke-width="10" stroke-linecap="round" />
+      <circle id="wrist" r="5" fill="var(--bg)" stroke="var(--dark)" stroke-width="2" />
+      <!-- flywheel: only rotated -->
+      <g id="flywheel">
+        <circle r="85" fill="none" stroke="var(--metal)" stroke-width="14" />
+        <circle r="78" fill="none" stroke="var(--dark)" stroke-width="1" />
+        <g stroke="var(--metal)" stroke-width="8">
+          <line x1="-78" y1="0" x2="78" y2="0" />
+          <line x1="0" y1="-78" x2="0" y2="78" />
+          <line x1="-55" y1="-55" x2="55" y2="55" />
+          <line x1="-55" y1="55" x2="55" y2="-55" />
+        </g>
+        <circle r="14" fill="var(--dark)" />
+        <!-- balance mark so rotation is visible -->
+        <circle cx="70" cy="0" r="6" fill="var(--accent)" />
+      </g>
+      <circle id="hub" r="5" fill="var(--bg)" />
+      <circle id="crankpin" r="6" fill="var(--accent)" stroke="var(--dark)" stroke-width="2" />
+    </svg>
+
+    <div class="row">
+      <button id="play">Pause</button>
+      <input id="theta" type="range" min="0" max="360" step="0.5" value="0" aria-label="Crank angle">
+      <output id="thetaOut">0°</output>
+    </div>
+    <div class="row">
+      <label>Speed <input id="speed" type="range" min="10" max="360" value="90" style="min-width:120px"></label>
+      <button id="stepBack">−1°</button><button id="stepFwd">+1°</button>
+    </div>
+    <div class="read">Piston displacement <code id="xOut"></code> · rod angle <code id="phiOut"></code></div>
+  </main>
+
+  <script>
+    // ---- Geometry (SVG units, y points down, theta measured clockwise on screen) ----
+    const CX = 130, CY = 170;   // flywheel / crank centre
+    const R = 50;              // crank radius (pin offset from centre)
+    const L = 150;             // connecting rod length (must be > R)
+    const PISTON_BACK = 10, PISTON_FRONT = 50;
+
+    // ---- Kinematics: everything is a function of theta (radians) ----
+    function kinematics(theta) {
+      const s = Math.sin(theta), c = Math.cos(theta);
+      const pin = { x: CX + R * c, y: CY + R * s };               // crank pin
+      const px = CX + R * c + Math.sqrt(L * L - R * R * s * s);          // wrist pin x (piston)
+      const phi = Math.asin(R * s / L);                           // rod angle
+      return { pin, px, phi };
+    }
+
+    // ---- Static layout ----
+    const $ = id => document.getElementById(id);
+    (function layout() {
+      const left = CX + (L - R) - PISTON_BACK - 6;
+      const right = CX + (L + R) + PISTON_FRONT + 6;
+      const cyl = $('cylinder');
+      cyl.setAttribute('x', left); cyl.setAttribute('y', CY - 38);
+      cyl.setAttribute('width', right - left); cyl.setAttribute('height', 76);
+      $('hub').setAttribute('cx', CX); $('hub').setAttribute('cy', CY);
+    })();
+
+    // ---- Apply a pose ----
+    function setTheta(deg) {
+      deg = ((deg % 360) + 360) % 360;
+      const th = deg * Math.PI / 180;
+      const k = kinematics(th);
+
+      $('flywheel').setAttribute('transform', `translate(${CX} ${CY}) rotate(${deg})`);
+      $('piston').setAttribute('transform', `translate(${k.px} ${CY})`);
+      $('crankpin').setAttribute('cx', k.pin.x); $('crankpin').setAttribute('cy', k.pin.y);
+      $('wrist').setAttribute('cx', k.px); $('wrist').setAttribute('cy', CY);
+      const rod = $('rod');
+      rod.setAttribute('x1', k.pin.x); rod.setAttribute('y1', k.pin.y);
+      rod.setAttribute('x2', k.px); rod.setAttribute('y2', CY);
+
+      $('theta').value = deg;
+      $('thetaOut').textContent = deg.toFixed(1) + '°';
+      $('xOut').textContent = (k.px - CX - (L - R)).toFixed(1) + ' / ' + (2 * R) + ' stroke';
+      $('phiOut').textContent = (k.phi * 180 / Math.PI).toFixed(1) + '°';
+      current = deg;
+    }
+    let current = 0;
+    window.setTheta = setTheta;   // for headless frame rendering
+
+    // ---- Controls ----
+    let playing = true, last = null;
+    function loop(t) {
+      if (playing && last !== null) setTheta(current + $('speed').value * (t - last) / 1000);
+      last = t; requestAnimationFrame(loop);
+    }
+    $('play').onclick = () => { playing = !playing; $('play').textContent = playing ? 'Pause' : 'Play'; };
+    $('theta').oninput = e => { playing = false; $('play').textContent = 'Play'; setTheta(+e.target.value); };
+    $('stepFwd').onclick = () => { playing = false; $('play').textContent = 'Play'; setTheta(current + 1); };
+    $('stepBack').onclick = () => { playing = false; $('play').textContent = 'Play'; setTheta(current - 1); };
+
+    // ?theta=123 renders a fixed pose and stops (handy for screenshots)
+    const q = new URLSearchParams(location.search).get('theta');
+    if (q !== null) { playing = false; $('play').textContent = 'Play'; setTheta(+q); } else setTheta(0);
+    requestAnimationFrame(loop);
+  </script>
+</body>
+
+</html>
