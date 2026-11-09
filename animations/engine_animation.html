@@ -2060,10 +2060,6 @@
 
 <div class="row">
   <button id="play">Pause</button>
-  <input id="theta" type="range" min="0" max="360" step="0.5" value="0" aria-label="Crank angle">
-  <output id="thetaOut">0°</output>
-</div>
-<div class="row">
   <label>Speed <input id="speed" type="range" min="10" max="360" value="90" style="min-width:120px"></label>
 </div>
 
@@ -2165,8 +2161,6 @@ function setTheta(deg) {
     setT(r.el, `rotate(${dir * deg * r.ratio} ${c.x} ${c.y})`);
   });
 
-  document.getElementById('theta').value = deg;
-  document.getElementById('thetaOut').textContent = deg.toFixed(1) + '°';
   current = deg;
 }
 window.setTheta = setTheta;   // for headless frame rendering (Playwright etc.)
@@ -2176,7 +2170,7 @@ const playBtn = document.getElementById('play');
 let playing = true, last = null;
 const stop = () => { playing = false; playBtn.textContent = 'Play'; };
 playBtn.onclick = () => { playing = !playing; playBtn.textContent = playing ? 'Pause' : 'Play'; };
-document.getElementById('theta').oninput = e => { stop(); setTheta(+e.target.value); };
+
 (function loop(t) {
   if (playing && last !== null) setTheta(current + document.getElementById('speed').value * (t - last) / 1000);
   last = t; requestAnimationFrame(loop);
